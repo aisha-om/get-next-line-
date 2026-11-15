@@ -23,7 +23,7 @@ int	main(void)
 	fd = open("mytest.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	write(fd, string, ft_strlen(string));
 	close(fd);
-	fd = open("my.txt", O_RDWR);
+	fd = open("mytest.txt", O_RDWR);
 	char	*line = get_next_line(fd);
 
 	printf("%s", line);
