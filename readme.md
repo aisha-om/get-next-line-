@@ -61,12 +61,7 @@ You can also use these third-party testing suites and containers to fully test t
 #### 1. Overview
 The algorithm behind `get_next_line` relies on a **static variable** acting as a persistent buffer stash across multiple function calls. The function continuously reads blocks of data of size `BUFFER_SIZE` using `read()` into a temporary buffer and appends them to the static stash until a newline character (`\n`) or End-of-File (`EOF`) is detected.
 
-#### 2. Justification & Complexity Analysis
-* **Time Complexity:** $O(N)$ where $N$ is the number of characters read until a newline character or EOF is encountered. Line extraction operates in linear time.
-* **Space Complexity:** $O(B + L)$ where $B$ is the `BUFFER_SIZE` and $L$ is the length of the extracted line preserved in memory.
-* **Memory Management:** Memory allocated during read cycles is pruned immediately after extracting a line. Remaining data stays in the static stash, ensuring zero memory leaks upon function completion or unexpected read errors.
-
-#### 3. Flow of Execution
+#### 2. Flow of Execution
 1. **Validation:** Verifies valid parameters (`fd >= 0`, `BUFFER_SIZE > 0`, and valid read buffer).
 2. **Buffer Reading:** Executes `read(fd, buffer, BUFFER_SIZE)` iteratively, joining bytes into the static stash until a `\n` or EOF is present.
 3. **Line Extraction:** Slices the stash string up to and including the first `\n`.

@@ -1,52 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                       :::      ::::::::    */
-/*   get_next_line.c                                   :+:      :+:    :+:    */
-/*                                                   +:+ +:+         +:+      */
-/*   By:  aabufarw <aabufarw@student.42.fr>        #+#  +:+       +#+         */
-/*                                               +#+#+#+#+#+   +#+            */
-/*   Created: 2026/11/06 12:41:19 by  aabufarw        #+#    #+#              */
-/*   Updated: 2026/11/15 19:46:44 by  aabufarw       ###   ########.fr        */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aabufarw <aabufarw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/11/06 12:41:19 by aabufarw          #+#    #+#             */
+/*   Updated: 2026/11/16 12:47:27 by aabufarw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-char	*get_next_line(int fd)
-{
-	static char	*container_static;
-	char		*one_line;
-
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
-		return (NULL);
-	container_static = read_file(fd, container_static);
-	if (!container_static || container_static[0] == '\0')
-	{
-		free(container_static);
-		container_static = NULL;
-		return (NULL);
-	}
-	one_line = find_line(container_static);
-	container_static = find_remaining(container_static);
-	return (one_line);
-}
-
-static char	*read_file(int fd, char *stash)
-{
-	char	*buffer;
-
-	if (!stash)
-		stash = ft_calloc(1, 1);
-	if (!stash)
-		return (NULL);
-	buffer = (char *) ft_calloc((size_t) BUFFER_SIZE + 1, sizeof(char));
-	if (!buffer)
-	{
-		free(stash);
-		return (NULL);
-	}
-	return (fill_buffer(fd, stash, buffer));
-}
 
 static char	*fill_buffer(int fd, char *stash, char *buffer)
 {
@@ -75,6 +39,23 @@ static char	*fill_buffer(int fd, char *stash, char *buffer)
 	}
 	free(buffer);
 	return (stash);
+}
+
+static char	*read_file(int fd, char *stash)
+{
+	char	*buffer;
+
+	if (!stash)
+		stash = ft_calloc(1, 1);
+	if (!stash)
+		return (NULL);
+	buffer = (char *) malloc((size_t)(BUFFER_SIZE + 1) * sizeof(char));
+	if (!buffer)
+	{
+		free(stash);
+		return (NULL);
+	}
+	return (fill_buffer(fd, stash, buffer));
 }
 
 static char	*find_line(char *stash)
@@ -127,4 +108,23 @@ static char	*find_remaining(char *stash)
 		leftover[j++] = stash[i++];
 	free(stash);
 	return (leftover);
+}
+
+char	*get_next_line(int fd)
+{
+	static char	*container_static;
+	char		*one_line;
+
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+		return (NULL);
+	container_static = read_file(fd, container_static);
+	if (!container_static || container_static[0] == '\0')
+	{
+		free(container_static);
+		container_static = NULL;
+		return (NULL);
+	}
+	one_line = find_line(container_static);
+	container_static = find_remaining(container_static);
+	return (one_line);
 }
